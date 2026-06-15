@@ -4,3 +4,4 @@ xcuserdata/
 DerivedData/
 build/
 .swiftpm/GoogleService-Info.plist
+MiniChatApp/GoogleService-Info.plist
