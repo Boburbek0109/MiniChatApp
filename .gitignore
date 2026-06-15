@@ -3,4 +3,4 @@ xcuserdata/
 *.xcuserstate
 DerivedData/
 build/
-.swiftpm/
+.swiftpm/GoogleService-Info.plist
