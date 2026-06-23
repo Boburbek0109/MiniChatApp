@@ -56,8 +56,6 @@ struct EditProfileView: View {
             Section("Basic info"){
                 TextField("Name", text: $profileVM.username)
                     .textInputAutocapitalization(.never)
-                TextField("Bio", text: $profileVM.bio)
-                    .textInputAutocapitalization(.never)
             }
             
             Section("Birthday"){
@@ -69,7 +67,7 @@ struct EditProfileView: View {
             }
             
             Section("Bio"){
-                TextField("Bio", text: $profileVM.bio)
+                TextEditor(text: $profileVM.bio)
                     .frame(minHeight: 100)
             }
             

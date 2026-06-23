@@ -8,12 +8,13 @@
 import FirebaseAuth
 import FirebaseFirestore
 
-struct ChatMessage: Codable, Identifiable {
+struct ChatMessageModel: Codable, Identifiable {
     @DocumentID var id: String?
 
-    let text: String
     let senderId: String
+    let receiverId: String
     let senderEmail: String?
+    let message: String
     let createdAt: Date
 
     var isFromCurrentUser: Bool {

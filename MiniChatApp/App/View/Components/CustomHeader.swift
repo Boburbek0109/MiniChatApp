@@ -82,11 +82,11 @@ struct CustomHeader: View {
     @ViewBuilder
     private func CustomNavigationBar() -> some View{
         VStack(alignment: isLargeHeader ? .leading : .center, spacing: 6) {
-            Text("Apple Developer")
+            Text(profileVM.username.isEmpty ? "User Name" : profileVM.username)
                 .font(.title)
                 .fontWeight(.semibold)
             
-            Text("133 Members, 13 online")
+            Text(profileVM.bio)
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }
@@ -112,7 +112,7 @@ struct CustomHeader: View {
             let tint: Color = colorScheme == .dark ? Color.black : Color.white
             
             ZStack{
-                if #available(iOS 26, *){
+                if #available(iOS 18, *){
                     Rectangle()
                         .fill(.clear)
                         .glassEffect(.clear.tint(tint.opacity(0.8)), in: .rect)
