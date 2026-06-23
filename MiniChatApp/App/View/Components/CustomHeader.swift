@@ -12,6 +12,7 @@ struct CustomHeader: View {
     @Binding var topInset: CGFloat
     @Environment(\.colorScheme) private var colorScheme
     @Environment(AuthViewModel.self) private var authVM
+    @Environment(ProfileViewModel.self) private var profileVM
     @State private var showsLogoutConfirmation = false
     
     var onEditProfile: () -> Void
@@ -56,12 +57,24 @@ struct CustomHeader: View {
             Rectangle()
                 .fill(.black)
             
-            Image(systemName: "apple.logo")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .foregroundStyle(.white)
-                .frame(height: isLargeHeader ? 200 : 55)
-                .offset(y: isLargeHeader ? -topInset : 0)
+            if let avatarURL = profileVM.avatarURL,
+               let url = URL(string: avatarURL) {
+                
+                AsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    ProgressView()
+                }
+            } else {
+                Image(systemName: "person.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundStyle(.white)
+                    .frame(height: isLargeHeader ? 200 : 55)
+                    .offset(y: isLargeHeader ? -topInset : 0)
+            }
         }
     }
     

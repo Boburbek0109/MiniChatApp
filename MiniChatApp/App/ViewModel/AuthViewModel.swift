@@ -31,15 +31,15 @@ final class AuthViewModel{
                 .user
             
             let appUser = AppUser(
-                id: nil,
-                email: user.email ?? email,
+                uid: user.uid,
                 username: "",
-                bio: nil,
+                email: user.email ?? email,
+                bio: "",
                 avatarURL: nil,
                 birthDate: nil)
             
             try Firestore.firestore()
-                .collection("user")
+                .collection("users")
                 .document(user.uid)
                 .setData(from: appUser)
             
@@ -62,7 +62,7 @@ final class AuthViewModel{
                 .user
             
             let appUser = try await Firestore.firestore()
-                .collection("user")
+                .collection("users")
                 .document(user.uid)
                 .getDocument(as: AppUser.self)
             

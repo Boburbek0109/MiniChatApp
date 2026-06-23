@@ -9,6 +9,8 @@ import SwiftUI
 import FirebaseCore
 
 struct ProfileView: View {
+    @Environment(ProfileViewModel.self) var profileVM
+    
     @State private var isLargeHeader = false
     @State private var topInset: CGFloat = 0
     @State private var scrollPhase: ScrollPhase = .idle
@@ -26,6 +28,7 @@ struct ProfileView: View {
                 CustomHeader(isLargeHeader: $isLargeHeader, topInset: $topInset, onEditProfile: onEditProfile)
             }
         }
+        
         .background(.fill.tertiary)
         .onScrollGeometryChange(for: CGFloat.self){
             $0.contentInsets.top
@@ -41,6 +44,9 @@ struct ProfileView: View {
                     isLargeHeader = newValue < -10 || (isLargeHeader && newValue < 0)
                 }
             }
+        }
+        .task {
+            await profileVM.loadProfile()
         }
         .onChange(of: isLargeHeader, { oldValue, newValue in
             

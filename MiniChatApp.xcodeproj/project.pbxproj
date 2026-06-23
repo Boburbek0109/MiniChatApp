@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F7C287632FE2D2E8006A94E8 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F7C287622FE2D2E8006A94E8 /* FirebaseStorage */; };
 		F7EF4A8F2FDD7212005C0F98 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F7EF4A8E2FDD7212005C0F98 /* FirebaseAuth */; };
 		F7EF4A912FDD7212005C0F98 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F7EF4A902FDD7212005C0F98 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
@@ -30,16 +31,25 @@
 			files = (
 				F7EF4A8F2FDD7212005C0F98 /* FirebaseAuth in Frameworks */,
 				F7EF4A912FDD7212005C0F98 /* FirebaseFirestore in Frameworks */,
+				F7C287632FE2D2E8006A94E8 /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F7C287612FE2D2E8006A94E8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F7CF100C2FD9664D005CF548 = {
 			isa = PBXGroup;
 			children = (
 				F7CF10172FD9664D005CF548 /* MiniChatApp */,
+				F7C287612FE2D2E8006A94E8 /* Frameworks */,
 				F7CF10162FD9664D005CF548 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,6 +84,7 @@
 			packageProductDependencies = (
 				F7EF4A8E2FDD7212005C0F98 /* FirebaseAuth */,
 				F7EF4A902FDD7212005C0F98 /* FirebaseFirestore */,
+				F7C287622FE2D2E8006A94E8 /* FirebaseStorage */,
 			);
 			productName = MiniChatApp;
 			productReference = F7CF10152FD9664D005CF548 /* MiniChatApp.app */;
@@ -359,6 +370,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		F7C287622FE2D2E8006A94E8 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F7EF4A8D2FDD7212005C0F98 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
 		F7EF4A8E2FDD7212005C0F98 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F7EF4A8D2FDD7212005C0F98 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

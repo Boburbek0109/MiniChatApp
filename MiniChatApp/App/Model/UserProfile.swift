@@ -10,10 +10,10 @@ import FirebaseFirestore
 struct UserProfile: Codable, Identifiable{
     @DocumentID var id: String?
     
-    var uid: String
-    var username: String
-    var bio: String?
-    var avatarUrl: String?
-    var birthDate: Date?
+    let uid: String
+    let username: String
+    let bio: String?
+    let avatarUrl: String?
+    let birthDate: Date?
     
 }

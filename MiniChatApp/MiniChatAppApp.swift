@@ -20,16 +20,19 @@ struct MiniChatAppApp: App {
     
 //    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @State private var authVM: AuthViewModel
+    @State private var profileVM: ProfileViewModel
     
     init(){
         FirebaseApp.configure()
         _authVM = State(initialValue: AuthViewModel())
+        _profileVM = State(initialValue: ProfileViewModel())
     }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(authVM)
+                .environment(profileVM)
         }
     }
 }

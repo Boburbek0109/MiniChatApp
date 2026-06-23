@@ -9,9 +9,11 @@ import FirebaseFirestore
 
 struct AppUser: Codable, Identifiable {
     @DocumentID var id: String?
-    var email: String
+    
+    let uid: String
     var username: String
-    var bio: String?
+    let email: String
+    var bio: String
     var avatarURL: String?
     var birthDate: Date?
     
