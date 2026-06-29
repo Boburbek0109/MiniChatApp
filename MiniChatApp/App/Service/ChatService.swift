@@ -16,14 +16,14 @@ final class ChatService{
         chatDB.collection("chats")
     }
     
-    func sendMessage(message: String, receiverId: String) async throws {
+    func sendMessage(messages: String, receiverId: String) async throws {
         guard let currentUser = Auth.auth().currentUser else {
             throw ChatServiceError.notLoggedIn
         }
 
         let senderId = currentUser.uid
         
-        let messageText = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        let messageText = messages.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard !messageText.isEmpty else {
             throw ChatServiceError.emptyMessage
@@ -31,7 +31,7 @@ final class ChatService{
         
         let chatId = makeChatId(senderId: senderId, receiverId: receiverId)
         let chatRef = chatColletction.document(chatId)
-        let messageRef = chatRef.collection("message").document()
+        let messageRef = chatRef.collection("messages").document()
         
         let messageData: [String: Any] = [
             "id": messageRef.documentID,
@@ -39,7 +39,7 @@ final class ChatService{
             "senderId": senderId,
             "receiverId": receiverId,
             "senderEmail": currentUser.email ?? "",
-            "message": messageText,
+            "messages": messageText,
             "createdAt": FieldValue.serverTimestamp()
         ]
         
@@ -57,6 +57,10 @@ final class ChatService{
         batch.setData(messageData, forDocument: messageRef)
         
         try await batch.commit()
+    }
+    
+    func observeMessages(receiverId: String, onChange: @escaping ([ChatMessageModel]) ->Void) -> ListenerRegistration {
+        
     }
     
     private func makeChatId(senderId: String, receiverId: String) -> String{

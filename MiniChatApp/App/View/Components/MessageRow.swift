@@ -36,7 +36,7 @@ struct MessageRow: View{
                         .foregroundStyle(.secondary)
                 }
                 
-                Text(message.message)
+                Text(message.messages)
                     .padding(12)
                     .background(message.isFromCurrentUser ? Color.blue : Color(.systemGray6))
                     .foregroundStyle(message.isFromCurrentUser ? Color.white : Color.primary)

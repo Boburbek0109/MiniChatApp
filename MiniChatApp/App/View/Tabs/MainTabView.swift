@@ -14,7 +14,7 @@ struct MainTabView: View{
     var body: some View{
         TabView(selection: $activeTab){
             Tab.init("Home", systemImage: "house", value: 0){
-                HomeView()
+                ChatListView()
             }
             
             Tab.init("Search", systemImage: "magnifyingglass", value: 1){

@@ -14,7 +14,7 @@ struct ChatMessageModel: Codable, Identifiable {
     let senderId: String
     let receiverId: String
     let senderEmail: String?
-    let message: String
+    let messages: String
     let createdAt: Date
 
     var isFromCurrentUser: Bool {

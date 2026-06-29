@@ -50,6 +50,7 @@ struct CustomHeader: View {
         }
         .padding(.top, 15)
     }
+    
     /// PROFILE LOGO
     @ViewBuilder
     private func LogoView() -> some View{
