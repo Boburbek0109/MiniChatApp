@@ -12,13 +12,14 @@ struct MainTabView: View{
     var onEditProfile: () -> Void
     
     var body: some View{
+        
         TabView(selection: $activeTab){
             Tab.init("Home", systemImage: "house", value: 0){
                 ChatListView()
             }
             
             Tab.init("Search", systemImage: "magnifyingglass", value: 1){
-                
+                UserSearchView()
             }
             
             Tab.init("Notification", systemImage: "bell", value: 2){
@@ -29,5 +30,6 @@ struct MainTabView: View{
                 ProfileView(onEditProfile: onEditProfile)
             }
         }
+        .tint(.indigo)
     }
 }

@@ -11,18 +11,6 @@ struct MessageRow: View{
     
     let message: ChatMessageModel
     
-    private var formattedDate: String{
-        if Calendar.current.isDateInToday(message.createdAt){
-            return message.createdAt.formatted(date: .omitted, time: .shortened)
-        }
-        
-        if Calendar.current.isDateInYesterday(message.createdAt){
-            return "Yesterday, \(message.createdAt.formatted(date: .omitted, time: .shortened))"
-        }
-        
-        return message.createdAt.formatted(date: .abbreviated, time: .shortened)
-    }
-    
     var body: some View{
         HStack{
             if message.isFromCurrentUser {
@@ -41,8 +29,15 @@ struct MessageRow: View{
                     .background(message.isFromCurrentUser ? Color.blue : Color(.systemGray6))
                     .foregroundStyle(message.isFromCurrentUser ? Color.white : Color.primary)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(alignment: message.isFromCurrentUser ? .bottomTrailing : .bottomLeading){
+                        Image(systemName: "arrowtriangle.down.fill")
+                            .font(.title)
+                            .rotationEffect(.degrees(message.isFromCurrentUser ? -45 : 45))
+                            .offset(x: message.isFromCurrentUser ? 30 : -30, y: 10)
+                            .foregroundStyle(message.isFromCurrentUser ? Color.blue : Color(.systemGray6))
+                    }
                 
-                Text(message.createdAt, style: .time)
+                Text(formattedDate)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -54,5 +49,19 @@ struct MessageRow: View{
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
+        
+    }
+    
+    private var formattedDate: String{
+        if Calendar.current.isDateInToday(message.createdAt){
+            return message.createdAt.formatted(date: .omitted, time: .shortened)
+        }
+        
+        if Calendar.current.isDateInYesterday(message.createdAt){
+            return "Yesterday, \(message.createdAt.formatted(date: .omitted, time: .shortened))"
+        }
+        
+        return message.createdAt.formatted(date: .abbreviated, time: .shortened)
     }
 }
+

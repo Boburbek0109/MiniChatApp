@@ -9,6 +9,7 @@ import SwiftUI
 import FirebaseCore
 
 struct ProfileView: View {
+    
     @Environment(ProfileViewModel.self) var profileVM
     
     @State private var isLargeHeader = false

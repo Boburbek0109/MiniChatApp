@@ -6,35 +6,50 @@
 //
 
 import SwiftUI
+import FirebaseCore
+import FirebaseAuth
 
 struct ChatListView: View {
+    @State private var listVM = ChatListViewModel()
+    @Environment(AuthViewModel.self) var authVM
+    
     @State private var isheaderVisile = true
         
     var body: some View {
             
         ZStack(alignment: .top){
-            ScrollView{
-                LazyVStack{
-                    
-                    ForEach(0..<20, id: \.self) { _ in
-                        ChatListRow()
+            if listVM.chats.isEmpty{
+                ContentUnavailableView("No chats yet", systemImage: "message", description: Text("Start new chat with Searching"))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.top, 70)
+            } else {
+                ScrollView{
+                    LazyVStack{
+                        ForEach(listVM.chats) { chat in
+                            if let currentUserId = authVM.user?.uid{
+                                if let user = listVM.user(for: chat, currentUserId: currentUserId){
+                                    ChatListRow(user: user, chat: chat)
+                                    
+                                }
+                            }
+                        }
                     }
+                    .padding(.top, 70)
                 }
-                .padding(.top, 70)
-            }
-            .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                geometry.contentOffset.y + geometry.contentInsets.top
-            } action: { oldValue, newValue in
-                let delta = newValue - oldValue
-                
-                guard abs(delta) > 2 else { return }
-                
-                if delta > 0, newValue > 20{
-                    isheaderVisile = false
-                } else if delta < 0 {
-                    isheaderVisile = true
+                .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                    geometry.contentOffset.y + geometry.contentInsets.top
+                } action: { oldValue, newValue in
+                    let delta = newValue - oldValue
+                    
+                    guard abs(delta) > 2 else { return }
+                    
+                    if delta > 0, newValue > 20{
+                        isheaderVisile = false
+                    } else if delta < 0 {
+                        isheaderVisile = true
+                    }
+                    
                 }
-                
             }
             
             ChatListHeader()
@@ -42,10 +57,20 @@ struct ChatListView: View {
                 .opacity(isheaderVisile ? 1 : 0)
                 .animation(.easeOut(duration: 0.35), value: isheaderVisile)
         }
+        .onAppear{
+            guard let currentUserId = authVM.user?.uid else { return }
+            listVM.startListening(currentUserId: currentUserId) }
+        .onDisappear{ listVM.stopListening() }
     }
 }
 
 
 #Preview {
-    ChatListView()
+    if FirebaseApp.app() == nil {
+        FirebaseApp.configure()
+    }
+    
+    return ChatListView()
+        .environment(ProfileViewModel())
+        .environment(AuthViewModel())
 }

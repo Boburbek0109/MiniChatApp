@@ -5,7 +5,7 @@
 //  Created by Bobur Sobirjanov on 6/21/26.
 //
 
-import Foundation
+import FirebaseFirestore
 
 @Observable
 final class ChatViewModel{
@@ -13,8 +13,10 @@ final class ChatViewModel{
     
     var errorMessage: String?
     var isSending = false
+    var isLoadingMessages = false
     
     private var chatService = ChatService()
+    private var listener: ListenerRegistration?
     
     func sendMessage(text: String, receiverId: String) async {
         guard !isSending else { return }
@@ -27,14 +29,34 @@ final class ChatViewModel{
         } catch {
             errorMessage = error.localizedDescription
         }
-//         isSending = false
     }
     
-    func startListetning(receiverId: String) async {
+    func startListening(receiverId: String) {
+        stopListening()
+        isLoadingMessages = true
+        messages = []
+        errorMessage = nil
         
+        do {
+            listener = try chatService.observeMessages(receiverId: receiverId) { [weak self] newMessage in
+                self?.messages = newMessage
+                self?.isLoadingMessages = false
+            } onError: { [weak self] error in
+                self?.errorMessage = error.localizedDescription
+                self?.isLoadingMessages = false
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+            isLoadingMessages = false
+        }
     }
     
-    func stopListetning() async {
-        
+    func stopListening() {
+        listener?.remove()
+        listener = nil
+    }
+    
+    deinit{
+        listener?.remove()
     }
 }

@@ -89,6 +89,18 @@ final class ProfileService {
 
         try await user.sendEmailVerification(beforeUpdatingEmail: newEmail)
     }
+    
+    func fetchUser(uid: String) async throws -> AppUser {
+        let snapshot = try await usersCollection.document(uid).getDocument()
+        return try snapshot.data(as: AppUser.self)
+    }
+    
+    func fetchUsers(uid: String) async throws -> [AppUser] {
+        let snapshot = try await usersCollection.whereField("uid", isNotEqualTo: uid).getDocuments()
+        return try snapshot.documents.map { document in
+            try document.data(as: AppUser.self)
+        }
+    }
 }
 
 

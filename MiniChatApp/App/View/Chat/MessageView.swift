@@ -15,23 +15,38 @@ struct MessageView: View {
     
     var body: some View {
         VStack {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(chatVM.messages) { message in
-                            MessageRow(message: message)
-                                .id(message.id)
+            if chatVM.isLoadingMessages{
+                ProgressView("Loading messages...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if chatVM.messages.isEmpty{
+                ContentUnavailableView("No messages yet", systemImage: "bubble.left.and.bubble.right", description: Text("Send the first message"))
+            } else {
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(chatVM.messages) { message in
+                                MessageRow(message: message)
+                                    .id(message.id)
+                            }
+                        }
+                        .padding()
+                    }
+                    .onChange(of: chatVM.messages.count) {
+                        if let lastMessageId = chatVM.messages.last?.id {
+                            withAnimation {
+                                proxy.scrollTo(lastMessageId, anchor: .bottom)
+                            }
                         }
                     }
-                    .padding()
                 }
-                .onChange(of: chatVM.messages.count) {
-                    if let lastMessageId = chatVM.messages.last?.id {
-                        withAnimation {
-                            proxy.scrollTo(lastMessageId, anchor: .bottom)
-                        }
-                    }
-                }
+            }
+            
+            if let errorMessage = chatVM.errorMessage{
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
             }
             
             HStack {
@@ -48,22 +63,26 @@ struct MessageView: View {
                         }
                     }
                 } label: {
-                    Image(systemName: "paperplane.fill")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 22))
+                    if chatVM.isSending{
+                        ProgressView()
+                    } else {
+                        Image(systemName: "paperplane.fill")
+                            .foregroundColor(.blue)
+                            .font(.system(size: 22))
+                    }
                 }
-                .disabled(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || chatVM.isSending)
             }
             .padding()
             .background(.ultraThinMaterial)
         }
         .navigationTitle(receiver.username)
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            chatVM.startListening(receiverId: receiver.uid)
+        }
+        .onDisappear {
+            chatVM.stopListening()
+        }
     }
 }
-
-
-//#Preview{
-//    MessageView(receiver: AppUser = [])
-//        .environment(ChatViewModel())
-//}

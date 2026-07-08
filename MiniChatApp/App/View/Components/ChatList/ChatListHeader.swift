@@ -50,3 +50,6 @@ struct ChatListHeader: View{
         .background(.thinMaterial)
     }
 }
+
+
+
