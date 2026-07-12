@@ -1,5 +1,5 @@
 //
-//  CustomHeader.swift
+//  ProfileHeader.swift
 //  MiniChatApp
 //
 //  Created by Bobur Sobirjanov on 6/15/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CustomHeader: View {
+struct ProfileHeader: View {
     @Binding var isLargeHeader: Bool
     @Binding var topInset: CGFloat
     @Environment(\.colorScheme) private var colorScheme

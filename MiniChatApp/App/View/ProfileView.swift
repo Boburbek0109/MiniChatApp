@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import FirebaseCore
 
 struct ProfileView: View {
     
@@ -20,13 +19,13 @@ struct ProfileView: View {
     
     var body: some View {
         ScrollView{
-            LazyVStack{
-                Text("Hello")
+            LazyVStack(alignment: .leading, spacing: 16){
+                
             }
             .padding(15)
             .padding(.bottom, 1000)
             .safeAreaInset(edge: .top, spacing: 0) {
-                CustomHeader(isLargeHeader: $isLargeHeader, topInset: $topInset, onEditProfile: onEditProfile)
+                ProfileHeader(isLargeHeader: $isLargeHeader, topInset: $topInset, onEditProfile: onEditProfile)
             }
         }
         
