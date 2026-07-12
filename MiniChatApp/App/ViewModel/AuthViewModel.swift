@@ -8,6 +8,7 @@
 import FirebaseAuth
 import FirebaseFirestore
 
+@MainActor
 @Observable
 final class AuthViewModel{
     

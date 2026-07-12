@@ -8,10 +8,12 @@
 import Foundation
 import FirebaseFirestore
 
+@MainActor
 @Observable
 final class ChatListViewModel {
     var chats: [ChatModel] = []
     var errorMessage: String?
+    var isLoading = false
      
     private let chatService = ChatService()
     private let profileService = ProfileService()
@@ -26,19 +28,31 @@ final class ChatListViewModel {
 }
     
     private func loadUser(for chats: [ChatModel], currentUserId: String) async {
-    for chat in chats {
-        if let otherUserId = otherUserId(in: chat, currentUserId: currentUserId) {
-            if (usersById[otherUserId] == nil) {
-                do {
-                    let otherUser = try await profileService.fetchUser(uid: otherUserId)
-                    usersById[otherUserId] = otherUser
-                } catch {
-                    errorMessage = error.localizedDescription
+        
+        let missingUserIds = Set(chats.compactMap { chat in
+            otherUserId(in: chat, currentUserId: currentUserId)
+        }.filter { usersById[$0] == nil })
+        
+        await withTaskGroup(of: (String, AppUser?).self) { group in
+            for userId in missingUserIds {
+                group.addTask{ [ profileService ] in
+                    do {
+                        let user = try await profileService.fetchUser(uid: userId)
+                        return (userId, user)
+                    } catch {
+                        print("DEBUG: Failed to load user \(userId): \(error)")
+                        return (userId, nil)
+                    }
+                }
+            }
+            
+            for await (userId, user) in group {
+                if let user {
+                    usersById[userId] = user
                 }
             }
         }
     }
-}
     
     func user(for chat: ChatModel, currentUserId: String) -> AppUser? {
         if let otherUserId = otherUserId(in: chat, currentUserId: currentUserId) {
@@ -51,23 +65,25 @@ final class ChatListViewModel {
         stopListening()
         chats = []
         errorMessage = nil
+        isLoading = true
         
         do {
             listener = try chatService.observeChats { [weak self] list in
                 self?.chats = list
+                self?.isLoading = false
                 Task { await self?.loadUser(for: list, currentUserId: currentUserId) }
+            } onError: { [weak self] error in
+                self?.errorMessage = error.localizedDescription
+                self?.isLoading = false
             }
         } catch {
             errorMessage = error.localizedDescription
+            isLoading = false
         }
     }
     
     func stopListening(){
         listener?.remove()
         listener = nil
-    }
-    
-    deinit{
-        listener?.remove()
     }
 }

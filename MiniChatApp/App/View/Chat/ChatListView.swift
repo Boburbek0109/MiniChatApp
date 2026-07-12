@@ -18,7 +18,14 @@ struct ChatListView: View {
     var body: some View {
             
         ZStack(alignment: .top){
-            if listVM.chats.isEmpty{
+            if listVM.isLoading {
+                ProgressView()
+            } else if let errorMessage = listVM.errorMessage {
+                ContentUnavailableView("Something went wrong", systemImage: "exclamationmark.triangle", description: Text(errorMessage))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .padding(.top, 70)
+            }
+            else if listVM.chats.isEmpty{
                 ContentUnavailableView("No chats yet", systemImage: "message", description: Text("Start new chat with Searching"))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, 70)

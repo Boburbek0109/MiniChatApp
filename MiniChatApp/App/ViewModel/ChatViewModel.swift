@@ -5,8 +5,10 @@
 //  Created by Bobur Sobirjanov on 6/21/26.
 //
 
+import Foundation
 import FirebaseFirestore
 
+@MainActor
 @Observable
 final class ChatViewModel{
     var messages: [ChatMessageModel] = []
@@ -26,6 +28,15 @@ final class ChatViewModel{
         defer { isSending = false }
         do {
             try await chatService.sendMessage(messages: text, receiverId: receiverId)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
+    func markChatAsRead(receiverId: String) async {
+        
+        do {
+            try await chatService.markChatAsRead(receiverId: receiverId)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -56,7 +67,4 @@ final class ChatViewModel{
         listener = nil
     }
     
-    deinit{
-        listener?.remove()
-    }
 }

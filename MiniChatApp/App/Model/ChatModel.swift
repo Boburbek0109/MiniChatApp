@@ -14,4 +14,9 @@ struct ChatModel: Codable, Identifiable {
     let lastSenderId: String
     let lastMessage: String
     let updatedAt: Date
+    let unreadCounts: [String: Int]?
+    
+    func unreadCounts(for userId: String) -> Int {
+        unreadCounts?[userId] ?? 0
+    }
 }

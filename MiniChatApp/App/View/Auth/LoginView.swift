@@ -92,7 +92,7 @@ struct LoginView: View{
                 .disabled(!isFormValid || authVM.isLoading)
                 .opacity(isFormValid && !authVM.isLoading ? 1 : 0.5)
                 
-                Button("Forgot your password?"){
+                Button("Enter your email first"){
                     Task {
                         resetPasswordMessage = nil
                         await authVM.resetPassword(email: email)
@@ -102,7 +102,7 @@ struct LoginView: View{
                         }
                     }
                 }
-                .disabled(!email.contains("@"))
+                .disabled(!email.contains("@") || authVM.isLoading)
                 
                 NavigationLink{
                     RegisterView()

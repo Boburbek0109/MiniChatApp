@@ -21,6 +21,33 @@ struct ProfileView: View {
         ScrollView{
             LazyVStack(alignment: .leading, spacing: 16){
                 
+                if profileVM.hasBirthday{
+                    VStack(alignment: .leading, spacing: 8){
+                        Text("Your Birthday!")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        
+                        Text(profileVM.birthDate.formatted(date: .abbreviated, time: .omitted))
+                            .font(.body)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.background, in: RoundedRectangle(cornerRadius: 12))
+                }
+                
+                if !profileVM.bio.isEmpty{
+                    VStack(alignment: .leading, spacing: 8){
+                        Text("Bio")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        
+                        Text(profileVM.bio)
+                            .font(.body)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.background, in: RoundedRectangle(cornerRadius: 12))
+                }
             }
             .padding(15)
             .padding(.bottom, 1000)

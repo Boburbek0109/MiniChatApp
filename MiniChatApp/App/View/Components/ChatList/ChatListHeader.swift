@@ -20,12 +20,18 @@ struct ChatListHeader: View{
                         image
                             .resizable()
                             .scaledToFill()
+                            .frame(width: 52, height: 52)
+                            .clipShape(Circle())
                     } placeholder: {
                         ProgressView()
+                            .frame(width: 52, height: 52)
+                            
                     }
                 } else {
                     Image(systemName: "person.fill")
                         .font(.system(size: 34, weight: .heavy))
+                        .frame(width: 52, height: 52)
+                        .clipShape(Circle())
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {

@@ -11,6 +11,7 @@ import PhotosUI
 struct EditProfileView: View {
     @Environment(AuthViewModel.self) private var authVM
     @Environment(ProfileViewModel.self) private var profileVM
+    @Environment(\.dismiss) private var dismiss
     
     @State private var selectedPhotoItem: PhotosPickerItem?
     
@@ -69,8 +70,16 @@ struct EditProfileView: View {
             Section("Bio"){
                 TextEditor(text: $profileVM.bio)
                     .frame(minHeight: 100)
+                Text("\(profileVM.bio.count)/300")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
-            
+            .onChange(of: profileVM.bio){
+                if profileVM.bio.count > 300 {
+                    profileVM.bio = String(profileVM.bio.prefix(300))
+                }
+            }
+ 
             if let errorMessage = profileVM.errorMessage{
                 Section{
                     Text(errorMessage)
@@ -86,7 +95,7 @@ struct EditProfileView: View {
                         await profileVM.saveProfile()
                     }
                 }
-                .disabled(profileVM.isLoading)
+                .disabled(profileVM.isLoading || !profileVM.hasProfileChanges)
             }
         }
         .task {
@@ -98,7 +107,7 @@ struct EditProfileView: View {
             }
         }
         .alert("Profile updated", isPresented: $profileVM.isSaved){
-            Button("Got it!") {}
+            Button("OK!") { dismiss() }
         } message: {
             Text("Your profile was updated successfully")
                 .foregroundStyle(.green)

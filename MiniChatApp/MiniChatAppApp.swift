@@ -8,26 +8,19 @@
 import SwiftUI
 import FirebaseCore
 
-//class AppDelegate: NSObject, UIApplicationDelegate{
-//    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-//        FirebaseApp.configure()
-//        return true
-//    }
-//}
-
 @main
 struct MiniChatAppApp: App {
     
-//    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @AppStorage("appTextSize") private var appTextSize: AppTextSize = .medium
+    @AppStorage("appTheme") private var appTheme: AppTheme = .system
+    
     @State private var authVM: AuthViewModel
     @State private var profileVM: ProfileViewModel
-    @State private var chatVM: ChatViewModel
     
     init(){
         FirebaseApp.configure()
         _authVM = State(initialValue: AuthViewModel())
         _profileVM = State(initialValue: ProfileViewModel())
-        _chatVM = State(initialValue: ChatViewModel())
     }
     
     var body: some Scene {
@@ -35,7 +28,8 @@ struct MiniChatAppApp: App {
             ContentView()
                 .environment(authVM)
                 .environment(profileVM)
-                .environment(chatVM)
+                .preferredColorScheme(appTheme.colorScheme)
+                .dynamicTypeSize(appTextSize.dynamicTypeSize)
         }
     }
 }

@@ -16,7 +16,6 @@ enum AppRoute: Hashable{
 struct MainView: View{
     @Environment(AuthViewModel.self) private var authVM
     @Environment(ProfileViewModel.self) private var profileVM
-    @Environment(ChatViewModel.self) private var chatVM
     
     @State private var activeTab = 0
     @State private var navigationPath: NavigationPath = .init()
@@ -63,5 +62,4 @@ struct MainView: View{
     return MainView()
         .environment(AuthViewModel())
         .environment(ProfileViewModel())
-        .environment(ChatViewModel())
 }

@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 import UIKit
 
-
+@MainActor
 @Observable
 final class ProfileViewModel{
     var profile: AppUser?
@@ -27,6 +27,15 @@ final class ProfileViewModel{
     var isSaved = false
     
     private let profileService = ProfileService()
+    
+    var hasProfileChanges: Bool{
+        guard let profile else  { return false }
+        
+        return selectedImageData != nil ||
+        username.trimmingCharacters(in: .whitespacesAndNewlines) != profile.username ||
+        bio.trimmingCharacters(in: .whitespacesAndNewlines) != profile.bio ||
+        (hasBirthday ? birthDate : nil) != profile.birthDate
+    }
     
     func loadProfile() async {
         isLoading = true

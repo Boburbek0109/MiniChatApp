@@ -8,6 +8,16 @@
 import SwiftUI
 
 struct Trigger_Button: View{
+    
+    @AppStorage("myBool") var myBool = false
+    @AppStorage("myInt") var myInt = 23
+    @AppStorage("myDoubt") var myDoubt = 1.99
+    @AppStorage("myString") var myString = "Hello World!"
+    @AppStorage("myUrl") var myUrl = URL(string: "https://www.google.com")!
+    @AppStorage("myData") var myData = Data ("Hello,wy".utf8)
+    
+    @AppStorage("darkbackground") var darkBackground = false
+    
     @State private var showButtons = false
     
     var body: some View{
@@ -16,8 +26,23 @@ struct Trigger_Button: View{
                 Text("Triggers").font(.largeTitle)
                 Text("Buttons").foregroundStyle(.gray)
                 
+                Text ("Stored in AppStorage").bold()
+                Text ("\(myBool.description)")
+                Text ("\(myInt)")
+                Text ("\(myDoubt)")
+                Text ("\(myString)")
+                Link ("\(myUrl)", destination: myUrl).font(.title)
+                Text ("\(String (decoding: myData, as: UTF8.self))")
+
+                Toggle (isOn: $darkBackground, label: {
+                Text("Use Dark Background?")
+                })
+                .padding()
+                
                 Spacer()
             }
+            .font(.title)
+            .preferredColorScheme (darkBackground ? .dark : .light)
             
             Group {
                 Button(action: { showButtons.toggle() }){

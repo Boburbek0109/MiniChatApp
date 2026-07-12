@@ -12,8 +12,12 @@ import FirebaseFirestore
 final class ChatService{
     private var chatDB = Firestore.firestore()
     
-    private var chatColletction: CollectionReference{
+    private var chatCollection: CollectionReference{
         chatDB.collection("chats")
+    }
+    
+    private func makeChatId(senderId: String, receiverId: String) -> String{
+        [senderId, receiverId].sorted().joined(separator: "_")
     }
     
     func sendMessage(messages: String, receiverId: String) async throws {
@@ -30,11 +34,10 @@ final class ChatService{
         }
         
         let chatId = makeChatId(senderId: senderId, receiverId: receiverId)
-        let chatRef = chatColletction.document(chatId)
+        let chatRef = chatCollection.document(chatId)
         let messageRef = chatRef.collection("messages").document()
         
         let messageData: [String: Any] = [
-            "id": messageRef.documentID,
             "chatId": chatId,
             "senderId": senderId,
             "receiverId": receiverId,
@@ -48,7 +51,9 @@ final class ChatService{
             "participants": [senderId, receiverId],
             "lastMessage": messageText,
             "lastSenderId": senderId,
-            "updatedAt": FieldValue.serverTimestamp()
+            "updatedAt": FieldValue.serverTimestamp(),
+            "unreadCounts.\(receiverId)": FieldValue.increment(Int64(1)),
+            "unreadCounts.\(senderId)": 0
         ]
         
         let batch = chatDB.batch()
@@ -67,7 +72,7 @@ final class ChatService{
         let senderId = currentUser.uid
         let chatId = makeChatId(senderId: senderId, receiverId: receiverId)
         
-        return chatColletction
+        return chatCollection
             .document(chatId)
             .collection("messages")
             .order(by: "createdAt", descending: false)
@@ -85,40 +90,61 @@ final class ChatService{
                 }
                 
                 let messages = documents.compactMap { document in
-                    try? document.data(as: ChatMessageModel.self)
+                    do {
+                       return try document.data(as: ChatMessageModel.self)
+                    } catch {
+                        print("DEBUG: Failed to decode message \(document.documentID): \(error)")
+                        return nil
+                    }
                 }
                 
                 onChange(messages)
             }
     }
     
-    private func makeChatId(senderId: String, receiverId: String) -> String{
-        [senderId, receiverId].sorted().joined(separator: "_")
-    }
-    
-    func observeChats(onChange: @escaping ([ChatModel]) -> Void) throws -> ListenerRegistration {
+    func observeChats(onChange: @escaping ([ChatModel]) -> Void, onError: @escaping (Error) -> Void) throws -> ListenerRegistration {
         
         guard let currentUser = Auth.auth().currentUser else {
             throw ChatServiceError.notLoggedIn
         }
         
-        return chatColletction
+        return chatCollection
             .whereField("participants", arrayContains: currentUser.uid)
             .order(by: "updatedAt", descending: true)
             .addSnapshotListener { snapShot, error in
                 if let error{
                     print("DEBUG: Error on observing chats: \(error.localizedDescription)")
-                    onChange([])
+                    onError(error)
                     return
                 }
                 
-                let chats = snapShot?.documents.compactMap { document in
-                    try? document.data(as: ChatModel.self)
+                let chats: [ChatModel] = snapShot?.documents.compactMap { document -> ChatModel? in
+                    do {
+                       return try document.data(as: ChatModel.self)
+                    } catch {
+                        print("DEBUG: Error on observing chats: \(document.documentID): \(error)")
+                        return nil
+                    }
                 } ?? []
                 
                 onChange(chats)
             }
     }
+    
+    func markChatAsRead(receiverId: String ) async throws {
+        guard let currentUser = Auth.auth().currentUser else {
+            throw ChatServiceError.notLoggedIn
+        }
+        
+        let senderId = currentUser.uid
+        let chatId = makeChatId(senderId: senderId, receiverId: receiverId)
+        let chatRef = chatCollection.document(chatId)
+        
+        try await chatRef.updateData([
+            "unreadCounts.\(senderId)": 0
+        ])
+    }
+    
 }
 
 

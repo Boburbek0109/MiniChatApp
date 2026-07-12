@@ -9,30 +9,42 @@ import SwiftUI
 
 struct DummySideBar: View {
     @Environment(AuthViewModel.self) private var authVM
+    @Environment(ProfileViewModel.self) private var profileVM
     
     var onSettings: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Circle()
-                .fill(.fill)
-                .frame(width: 60, height: 60)
-                .padding(.bottom, 10)
+            if let avatarURL = profileVM.avatarURL,
+               let url = URL(string: avatarURL) {
+                
+                AsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 52, height: 52)
+                        .clipShape(Circle())
+                        .padding(.bottom, 15)
+                } placeholder: {
+                    ProgressView()
+                        .frame(width: 52, height: 52)
+                        .padding(.bottom, 15)
+                }
+            } else {
+                Image(systemName: "person.fill")
+                    .font(.system(size: 34, weight: .heavy))
+                    .frame(width: 52, height: 52)
+                    .clipShape(Circle())
+                    .padding(.bottom, 15)
+                
+            }
             
-            Text(authVM.appUser?.username ?? "No username")
+            Text(profileVM.username.isEmpty ? "No Username" : profileVM.username)
                 .font(.title3)
                 .fontWeight(.semibold)
             
-            Text(authVM.appUser?.email ?? "")
+            Text(authVM.appUser?.email ?? profileVM.profile?.email ?? "No Email")
                 .foregroundStyle(.gray)
-            
-            //            HStack(spacing: 10) {
-            //                Text("876 Following")
-            //
-            //                Text("123 Followers")
-            //            }
-            //            .font(.callout)
-            //            .fontWeight(.medium)
             
             Button{
                onSettings()

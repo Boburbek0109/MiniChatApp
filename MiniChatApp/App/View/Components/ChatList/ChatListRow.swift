@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import FirebaseCore
 
 struct ChatListRow: View {
     
@@ -29,23 +28,25 @@ struct ChatListRow: View {
                     } placeholder: {
                         ProgressView()
                     }
+                    .frame(width: 52, height: 52)
+                    .clipShape(Circle())
                 } else {
                     Image(systemName: "person.circle.fill")
-                        .font(.system(size: 32))
-                        .padding()
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 44)
-                                .stroke(.black, lineWidth: 1)
-                        }
+                        .font(.system(size: 52))
+                        .frame(width: 52, height: 52)
                 }
                     
                     VStack(alignment: .leading) {
-                        Text(user.username)
+                        Text(user.username.isEmpty ? user.email : user.username)
                             .font(.system(size: 16, weight: .bold))
                         Text(chat.lastMessage)
                             .font(.system(size: 14))
                             .foregroundStyle(Color(.lightGray))
+                            .lineLimit(2)
+                            .truncationMode(.tail)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
                     Spacer()
                     
                     Text(formattedDate)

@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseAuth
 
+@MainActor
 @Observable
 final class UserSearchViewModel{
     var searchText = ""

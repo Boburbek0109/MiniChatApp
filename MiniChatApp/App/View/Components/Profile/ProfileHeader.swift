@@ -86,10 +86,6 @@ struct ProfileHeader: View {
             Text(profileVM.username.isEmpty ? "User Name" : profileVM.username)
                 .font(.title)
                 .fontWeight(.semibold)
-            
-            Text(profileVM.bio)
-                .font(.callout)
-                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: isLargeHeader ? .leading : .center)
         

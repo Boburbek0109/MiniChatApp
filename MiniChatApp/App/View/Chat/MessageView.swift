@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct MessageView: View {
-    @Environment(ChatViewModel.self) private var chatVM
-    @State private var messageText = ""
+    @State private var chatVM = ChatViewModel()
+    @State private var composerState = MessageComposerState()
     
     let receiver: AppUser
     
@@ -31,7 +31,7 @@ struct MessageView: View {
                         }
                         .padding()
                     }
-                    .onChange(of: chatVM.messages.count) {
+                    .onChange(of: chatVM.messages.count, initial: true) {
                         if let lastMessageId = chatVM.messages.last?.id {
                             withAnimation {
                                 proxy.scrollTo(lastMessageId, anchor: .bottom)
@@ -50,16 +50,17 @@ struct MessageView: View {
             }
             
             HStack {
-                TextField("Type a message...", text: $messageText)
+                TextField("message...", text: $composerState.text, axis: .vertical)
+                    .lineLimit(1...5)
                     .textFieldStyle(.roundedBorder)
                     .frame(minHeight: 30)
                 
                 Button {
                     Task{
-                        await chatVM.sendMessage(text: messageText, receiverId: receiver.uid)
+                        await chatVM.sendMessage(text: composerState.trimmedText, receiverId: receiver.uid)
                         
                         if chatVM.errorMessage == nil{
-                            messageText = ""
+                            composerState.clear()
                         }
                     }
                 } label: {
@@ -71,7 +72,7 @@ struct MessageView: View {
                             .font(.system(size: 22))
                     }
                 }
-                .disabled(messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || chatVM.isSending)
+                .disabled(!composerState.canSend || chatVM.isSending)
             }
             .padding()
             .background(.ultraThinMaterial)
@@ -80,6 +81,9 @@ struct MessageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             chatVM.startListening(receiverId: receiver.uid)
+            Task{
+                await chatVM.markChatAsRead(receiverId: receiver.uid)
+            }
         }
         .onDisappear {
             chatVM.stopListening()
