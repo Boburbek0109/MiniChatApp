@@ -23,21 +23,11 @@ final class ProfileService {
         }
 
         let snapshot = try await usersCollection.document(user.uid).getDocument()
-
-        if let profile = try? snapshot.data(as: AppUser.self) {
-            return profile
-        } else {
-            let newProfile = AppUser(
-                uid: user.uid,
-                username: "",
-                email: user.email ?? "",
-                bio: "",
-                avatarURL: nil,
-                birthDate: nil)
-
-            try usersCollection.document(user.uid).setData(from: newProfile)
-            return newProfile
+        guard snapshot.exists else{
+            throw ProfileError.profileNotFound
         }
+
+        return try snapshot.data(as: AppUser.self)
     }
 
     func updateProfile(_ profile: AppUser) async throws {
@@ -106,11 +96,15 @@ final class ProfileService {
 
 enum ProfileError: LocalizedError {
     case notLoggedIn
+    case profileNotFound
     
     var errorDescription: String? {
         switch self {
         case .notLoggedIn:
             return "User is not logged in"
+            
+        case .profileNotFound:
+            return "Profile not found"
         }
     }
 }

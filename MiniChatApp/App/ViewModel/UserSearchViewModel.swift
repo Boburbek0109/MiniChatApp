@@ -41,7 +41,7 @@ final class UserSearchViewModel{
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if query.isEmpty {
-            return users
+            return []
         }
         
         return users.filter { user in

@@ -104,5 +104,20 @@ final class ProfileViewModel{
             errorMessage = error.localizedDescription
         }
     }
+    
+    func clearProfile() {
+        
+        hasBirthday = false
+        isLoading = false
+        isSaved = false
+        birthDate = Date()
+        profile = nil
+        username = ""
+        bio = ""
+        avatarURL = nil
+        selectedImageData = nil
+        errorMessage = nil
+        
+    }
 }
 

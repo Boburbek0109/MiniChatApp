@@ -35,7 +35,7 @@ struct ChatListView: View {
                         ForEach(listVM.chats) { chat in
                             if let currentUserId = authVM.user?.uid{
                                 if let user = listVM.user(for: chat, currentUserId: currentUserId){
-                                    ChatListRow(user: user, chat: chat)
+                                    ChatListRow(user: user, chat: chat, currentUserId: currentUserId)
                                     
                                 }
                             }

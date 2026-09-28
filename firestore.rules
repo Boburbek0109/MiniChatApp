@@ -1,0 +1,108 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function hasTwoParticipants(participants) {
+      return participants is list
+        && participants.size() == 2
+        && participants[0] is string
+        && participants[1] is string
+        && participants[0].size() > 0
+        && participants[1].size() > 0
+        && participants.toSet().size() == 2;
+    }
+
+    function isChatParticipant(chatId) {
+      return isSignedIn()
+        && request.auth.uid in get(
+          /databases/$(database)/documents/chats/$(chatId)
+        ).data.participants;
+    }
+
+    function isChatParticipantAfterWrite(chatId) {
+      return isSignedIn()
+        && request.auth.uid in getAfter(
+          /databases/$(database)/documents/chats/$(chatId)
+        ).data.participants;
+    }
+
+    function hasMatchingChatId(chatId, participants) {
+      return chatId == participants[0] + '_' + participants[1]
+        || chatId == participants[1] + '_' + participants[0];
+    }
+
+    function isValidMessage(chatId) {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          'chatId', 'senderId', 'receiverId',
+          'senderEmail', 'messages', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'chatId', 'senderId', 'receiverId',
+          'senderEmail', 'messages', 'createdAt'
+        ])
+        && data.chatId == chatId
+        && data.senderId == request.auth.uid
+        && data.receiverId is string
+        && data.receiverId != request.auth.uid
+        && data.receiverId in getAfter(
+          /databases/$(database)/documents/chats/$(chatId)
+        ).data.participants
+        && data.senderEmail is string
+        && data.senderEmail == request.auth.token.get('email', '')
+        && data.messages is string
+        && data.messages.size() > 0
+        && data.createdAt == request.time;
+    }
+
+    // Public and private profile fields are still stored together.
+    // Splitting them requires a coordinated client change.
+    match /users/{userId} {
+      allow read: if isSignedIn();
+
+      allow create, update: if isSignedIn()
+                            && request.auth.uid == userId
+                            && request.resource.data.uid == userId;
+
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /chats/{chatId} {
+      allow create: if isSignedIn()
+                    && hasTwoParticipants(request.resource.data.participants)
+                    && request.auth.uid in request.resource.data.participants
+                    && hasMatchingChatId(chatId, request.resource.data.participants)
+                    && request.resource.data.id == chatId;
+
+      allow read: if isSignedIn()
+                  && request.auth.uid in resource.data.participants;
+
+      allow update: if isSignedIn()
+                    && request.auth.uid in resource.data.participants
+                    && hasTwoParticipants(request.resource.data.participants)
+                    && request.resource.data.participants.toSet()
+                       == resource.data.participants.toSet()
+                    && request.resource.data.id == chatId;
+
+      // Chat deletion is not implemented in the app. Deleting only the
+      // parent would leave its messages behind, so keep it disabled.
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if isChatParticipant(chatId);
+
+        allow create: if isChatParticipantAfterWrite(chatId)
+                      && isValidMessage(chatId);
+
+        allow update: if false;
+
+        allow delete: if isChatParticipant(chatId)
+                      && resource.data.senderId == request.auth.uid;
+      }
+    }
+  }
+}

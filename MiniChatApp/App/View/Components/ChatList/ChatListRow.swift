@@ -12,6 +12,12 @@ struct ChatListRow: View {
     let user: AppUser
     let chat: ChatModel
     
+    let currentUserId: String
+    
+    private var unreadCount: Int {
+        chat.unreadCounts(for: currentUserId)
+    }
+    
     var body: some View {
         VStack{
             NavigationLink{
@@ -50,7 +56,8 @@ struct ChatListRow: View {
                     Spacer()
                     
                     Text(formattedDate)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 8, weight: .semibold))
+                        .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .center))
                 }
                 Divider()
                     .padding(.vertical, 8)

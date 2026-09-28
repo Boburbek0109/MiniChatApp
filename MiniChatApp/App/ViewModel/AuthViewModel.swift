@@ -13,6 +13,7 @@ import FirebaseFirestore
 final class AuthViewModel{
     
     var isLoading = false
+    var isAuthReady = false
     var user: User? = Auth.auth().currentUser
     var appUser: AppUser?
     var signOutErrorMessage: String?
@@ -57,21 +58,21 @@ final class AuthViewModel{
         loginErrorMessage = nil
         defer { isLoading = false }
         
-        do{
-            let user = try await Auth.auth()
-                .signIn(withEmail: email, password: password)
-                .user
-            
-            let appUser = try await Firestore.firestore()
-                .collection("users")
-                .document(user.uid)
-                .getDocument(as: AppUser.self)
-            
-            self.user = user
-            self.appUser = appUser
-        } catch {
-            loginErrorMessage = error.localizedDescription
-        }
+            do{
+                let user = try await Auth.auth()
+                    .signIn(withEmail: email, password: password)
+                    .user
+                
+                let appUser = try await Firestore.firestore()
+                    .collection("users")
+                    .document(user.uid)
+                    .getDocument(as: AppUser.self)
+                
+                self.user = user
+                self.appUser = appUser
+            } catch {
+                loginErrorMessage = error.localizedDescription
+            }
     }
     
     func signOut() {
@@ -93,5 +94,15 @@ final class AuthViewModel{
         } catch {
             loginErrorMessage = error.localizedDescription
         }
+    }
+    
+    func monitorAuthState() async {
+        
+        for await user in Auth.auth().authStateChanges {
+            self.user = user
+            isAuthReady = true
+        }
+        
+        
     }
 }

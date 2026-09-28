@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 
 @main
 struct MiniChatAppApp: App {
@@ -28,6 +29,11 @@ struct MiniChatAppApp: App {
             ContentView()
                 .environment(authVM)
                 .environment(profileVM)
+                .onChange(of: authVM.user?.uid) { _, _ in
+                    profileVM.clearProfile() }
+                .task {
+                    await authVM.monitorAuthState()
+                }
                 .preferredColorScheme(appTheme.colorScheme)
                 .dynamicTypeSize(appTextSize.dynamicTypeSize)
         }

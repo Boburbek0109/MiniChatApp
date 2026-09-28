@@ -47,11 +47,11 @@ struct MainView: View{
                 }
             }
         }
-        .task{
-            if profileVM.profile == nil {
-                await profileVM.loadProfile()
-            }
-        }
+//        .task{
+//            if profileVM.profile == nil {
+//                await profileVM.loadProfile()
+//            }
+//        }
     }
 }
 

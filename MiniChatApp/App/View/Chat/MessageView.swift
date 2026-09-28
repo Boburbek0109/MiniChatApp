@@ -33,6 +33,9 @@ struct MessageView: View {
                     }
                     .onChange(of: chatVM.messages.count, initial: true) {
                         if let lastMessageId = chatVM.messages.last?.id {
+                            Task{
+                                await chatVM.markChatAsRead(receiverId: receiver.uid)
+                            }
                             withAnimation {
                                 proxy.scrollTo(lastMessageId, anchor: .bottom)
                             }
@@ -81,9 +84,6 @@ struct MessageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             chatVM.startListening(receiverId: receiver.uid)
-            Task{
-                await chatVM.markChatAsRead(receiverId: receiver.uid)
-            }
         }
         .onDisappear {
             chatVM.stopListening()

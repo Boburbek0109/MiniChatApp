@@ -12,14 +12,30 @@
 		F7EF4A912FDD7212005C0F98 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F7EF4A902FDD7212005C0F98 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		F7FBF01330511C2D0011CA49 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F7CF100D2FD9664D005CF548 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F7CF10142FD9664D005CF548;
+			remoteInfo = MiniChatApp;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		F7CF10152FD9664D005CF548 /* MiniChatApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MiniChatApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7FBF00F30511C2C0011CA49 /* MiniChatAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MiniChatAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		F7CF10172FD9664D005CF548 /* MiniChatApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = MiniChatApp;
+			sourceTree = "<group>";
+		};
+		F7FBF01030511C2D0011CA49 /* MiniChatAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MiniChatAppTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +48,13 @@
 				F7EF4A8F2FDD7212005C0F98 /* FirebaseAuth in Frameworks */,
 				F7EF4A912FDD7212005C0F98 /* FirebaseFirestore in Frameworks */,
 				F7C287632FE2D2E8006A94E8 /* FirebaseStorage in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7FBF00C30511C2C0011CA49 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				F7CF10172FD9664D005CF548 /* MiniChatApp */,
+				F7FBF01030511C2D0011CA49 /* MiniChatAppTests */,
 				F7C287612FE2D2E8006A94E8 /* Frameworks */,
 				F7CF10162FD9664D005CF548 /* Products */,
 			);
@@ -58,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				F7CF10152FD9664D005CF548 /* MiniChatApp.app */,
+				F7FBF00F30511C2C0011CA49 /* MiniChatAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -90,6 +115,29 @@
 			productReference = F7CF10152FD9664D005CF548 /* MiniChatApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F7FBF00E30511C2C0011CA49 /* MiniChatAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F7FBF01530511C2D0011CA49 /* Build configuration list for PBXNativeTarget "MiniChatAppTests" */;
+			buildPhases = (
+				F7FBF00B30511C2C0011CA49 /* Sources */,
+				F7FBF00C30511C2C0011CA49 /* Frameworks */,
+				F7FBF00D30511C2C0011CA49 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F7FBF01430511C2D0011CA49 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				F7FBF01030511C2D0011CA49 /* MiniChatAppTests */,
+			);
+			name = MiniChatAppTests;
+			packageProductDependencies = (
+			);
+			productName = MiniChatAppTests;
+			productReference = F7FBF00F30511C2C0011CA49 /* MiniChatAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -97,11 +145,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2650;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					F7CF10142FD9664D005CF548 = {
 						CreatedOnToolsVersion = 26.5;
+					};
+					F7FBF00E30511C2C0011CA49 = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = F7CF10142FD9664D005CF548;
 					};
 				};
 			};
@@ -123,12 +175,20 @@
 			projectRoot = "";
 			targets = (
 				F7CF10142FD9664D005CF548 /* MiniChatApp */,
+				F7FBF00E30511C2C0011CA49 /* MiniChatAppTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F7CF10132FD9664D005CF548 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7FBF00D30511C2C0011CA49 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -145,7 +205,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F7FBF00B30511C2C0011CA49 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F7FBF01430511C2D0011CA49 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F7CF10142FD9664D005CF548 /* MiniChatApp */;
+			targetProxy = F7FBF01330511C2D0011CA49 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		F7CF101E2FD9664E005CF548 /* Debug */ = {
@@ -335,6 +410,46 @@
 			};
 			name = Release;
 		};
+		F7FBF01630511C2D0011CA49 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mysoft.MiniChatAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MiniChatApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MiniChatApp";
+			};
+			name = Debug;
+		};
+		F7FBF01730511C2D0011CA49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mysoft.MiniChatAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MiniChatApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MiniChatApp";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -352,6 +467,15 @@
 			buildConfigurations = (
 				F7CF10212FD9664E005CF548 /* Debug */,
 				F7CF10222FD9664E005CF548 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F7FBF01530511C2D0011CA49 /* Build configuration list for PBXNativeTarget "MiniChatAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F7FBF01630511C2D0011CA49 /* Debug */,
+				F7FBF01730511C2D0011CA49 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

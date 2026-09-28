@@ -16,6 +16,7 @@ final class ChatViewModel{
     var errorMessage: String?
     var isSending = false
     var isLoadingMessages = false
+    var isListening = false
     
     private var chatService = ChatService()
     private var listener: ListenerRegistration?
@@ -28,6 +29,9 @@ final class ChatViewModel{
         defer { isSending = false }
         do {
             try await chatService.sendMessage(messages: text, receiverId: receiverId)
+            if isListening == false {
+                startListening(receiverId: receiverId)
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -47,6 +51,7 @@ final class ChatViewModel{
         isLoadingMessages = true
         messages = []
         errorMessage = nil
+        isListening = true
         
         do {
             listener = try chatService.observeMessages(receiverId: receiverId) { [weak self] newMessage in
@@ -55,16 +60,19 @@ final class ChatViewModel{
             } onError: { [weak self] error in
                 self?.errorMessage = error.localizedDescription
                 self?.isLoadingMessages = false
+                self?.isListening = false
             }
         } catch {
             errorMessage = error.localizedDescription
             isLoadingMessages = false
+            isListening = false
         }
     }
     
     func stopListening() {
         listener?.remove()
         listener = nil
+        isListening = false
     }
     
 }
