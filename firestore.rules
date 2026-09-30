@@ -69,6 +69,11 @@ service cloud.firestore {
                             && request.resource.data.uid == userId;
 
       allow delete: if isSignedIn() && request.auth.uid == userId;
+
+      match /private/profile {
+        allow read, create, update: if isSignedIn()
+                                    && request.auth.uid == userId;
+      }
     }
 
     match /chats/{chatId} {

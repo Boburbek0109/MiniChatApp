@@ -25,12 +25,19 @@ struct UserSearchRow: View {
             .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(user.username)
-                    .font(.headline)
-
-                Text(user.email)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                if user.username.isEmpty {
+                    Text("User")
+                        .font(.headline)
+                } else {
+                    Text(user.username)
+                        .font(.headline)
+                }
+                
+                if !user.email.isEmpty {
+                    Text(user.email)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Spacer()

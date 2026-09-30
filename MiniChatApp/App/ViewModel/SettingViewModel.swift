@@ -14,6 +14,8 @@ final class SettingViewModel{
     var isLoading = false
     var successMessage: String?
     var errorMessage: String?
+    var privateProfile = PrivateProfile.init(birthDate: nil, isEmailPublic: false, isBirthdayPublic: false)
+    var isPrivacyLoaded = false
     
     private var profileService = ProfileService()
     
@@ -37,6 +39,35 @@ final class SettingViewModel{
             try await profileService.sendEmailChangeVerification(to: email)
             successMessage = "A verification email has been sent to \(email)."
             newEmail = ""
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
+    func loadPrivacySettings() async {
+        isPrivacyLoaded = false
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        
+        do {
+            privateProfile = try await profileService.fetchPrivateProfile()
+            isPrivacyLoaded = true
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
+    func savePrivacySettings() async {
+        if isLoading == true { return }
+        isLoading = true
+        errorMessage = nil
+        successMessage = nil
+        defer { isLoading = false }
+        
+        do {
+            try await profileService.savePrivateProfile(profile: privateProfile)
+            successMessage = "Privacy setting saved"
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -22,16 +22,61 @@ struct ContentView: View {
             }
         } else if profileVM.profile == nil && profileVM.errorMessage != nil{
             VStack(spacing: 8){
-                Text("Could not load profile")
+                if profileVM.isProfileMissing{
+                    Text("Your profile hasn’t been created yet.")
+                    Button{
+                        Task{
+                            await profileVM.recoverMissingProfile()
+                        }
+                    } label: {
+                        Text("Create profile")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.glassProminent)
+                    .controlSize(.large)
+                } else {
+                    Text("Could not load profile")
+                }
                 
-                Button("Try again"){
-                    profileVM.errorMessage = nil
+                if let message = profileVM.errorMessage {
+                    Text(message)
+                }
+                
+                VStack(spacing: 12){
+                    Button{
+                        profileVM.errorMessage = nil
+                    } label: {
+                        Text("Try again")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.glass)
+                    .controlSize(.large)
+                    
+                    Button(role: .destructive) {
+                        authVM.signOut()
+                    } label: {
+                        Text("Log Out")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.glass)
+                    .tint(.red)
+                    .controlSize(.large)
+                    
                 }
             }
+            .padding(24)
+            .background(.thinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .padding(.horizontal, 20)
+            .disabled(profileVM.isLoading)
+            
         } else if profileVM.profile == nil  {
+            
             ProgressView()
                 .task {
-                    await profileVM.loadProfile()
+                    if profileVM.isLoading == false{
+                        await profileVM.loadProfile()
+                    }
                 }
         } else {
             MainView()

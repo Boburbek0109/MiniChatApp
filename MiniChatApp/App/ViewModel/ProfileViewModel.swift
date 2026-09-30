@@ -25,6 +25,7 @@ final class ProfileViewModel{
     var isLoading = false
     var errorMessage: String?
     var isSaved = false
+    var isProfileMissing = false
     
     private let profileService = ProfileService()
     
@@ -39,6 +40,7 @@ final class ProfileViewModel{
     
     func loadProfile() async {
         isLoading = true
+        isProfileMissing = false
         errorMessage = nil
         
         do {
@@ -55,9 +57,30 @@ final class ProfileViewModel{
             } else {
                 self.hasBirthday = false
             }
+        } catch ProfileError.profileNotFound {
+            isProfileMissing = true
+            errorMessage = ProfileError.profileNotFound.localizedDescription
         } catch {
             errorMessage = error.localizedDescription
         }
+        isLoading = false
+    }
+    
+    func recoverMissingProfile() async {
+        
+        if isLoading == true {
+            return
+        }
+        
+        isLoading = true
+        
+        do{
+            try await profileService.createMissingProfile()
+            await loadProfile()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        
         isLoading = false
     }
     
@@ -117,6 +140,7 @@ final class ProfileViewModel{
         avatarURL = nil
         selectedImageData = nil
         errorMessage = nil
+        isProfileMissing = false
         
     }
 }

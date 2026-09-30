@@ -12,6 +12,7 @@ struct SettingsView: View {
     @AppStorage("appTheme") private var appTheme: AppTheme = .system
     
     @Environment(AuthViewModel.self) private var authVM
+    @State private var settingVM = SettingViewModel()
     @State private var showsLogoutAlert = false
     @State private var showDeleteAlert = false
     @Environment(\.dismiss) private var dismiss
@@ -36,6 +37,29 @@ struct SettingsView: View {
                     }
                 }
             }
+            
+            Section("Privacy"){
+                Toggle("Show email", isOn: $settingVM.privateProfile.isEmailPublic)
+                
+                Toggle("Show birthday", isOn: $settingVM.privateProfile.isBirthdayPublic)
+                
+                Button{
+                    Task{
+                        await settingVM.savePrivacySettings()
+                    }
+                } label: {
+                    Text("Save")
+                }
+                
+                if let message = settingVM.successMessage{
+                    Text(message)
+                }
+                
+                if settingVM.isLoading {
+                    ProgressView()
+                }
+            }
+            .disabled(settingVM.isLoading || !settingVM.isPrivacyLoaded)
             
             Section{
                 HStack(spacing: 12) {
@@ -64,6 +88,9 @@ struct SettingsView: View {
             .listRowBackground(Color.clear)
         }
         .navigationTitle("Setting")
+        .task {
+            await settingVM.loadPrivacySettings()
+        }
         
     }
 }
@@ -72,4 +99,5 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .environment(AuthViewModel())
+    
 }

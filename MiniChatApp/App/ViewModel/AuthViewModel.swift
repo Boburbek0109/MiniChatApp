@@ -27,7 +27,6 @@ final class AuthViewModel{
         defer { isLoading = false }
         
         do{
-            
             let user = try await Auth.auth()
                 .createUser(withEmail: email, password: password)
                 .user
@@ -40,15 +39,23 @@ final class AuthViewModel{
                 avatarURL: nil,
                 birthDate: nil)
             
-            try Firestore.firestore()
+            let publicProfile = PublicProfile(
+                uid: user.uid,
+                username: "",
+                bio: "",
+                avatarURL: nil)
+            
+            let privateProfile = PrivateProfile(birthDate: nil)
+            
+            let profileData = try Firestore.Encoder().encode(appUser)
+            try await Firestore.firestore()
                 .collection("users")
                 .document(user.uid)
-                .setData(from: appUser)
+                .setData(profileData)
             
             self.user = user
             self.appUser = appUser
         } catch {
-            
             registerErrorMessage = error.localizedDescription
         }
     }
@@ -63,10 +70,7 @@ final class AuthViewModel{
                     .signIn(withEmail: email, password: password)
                     .user
                 
-                let appUser = try await Firestore.firestore()
-                    .collection("users")
-                    .document(user.uid)
-                    .getDocument(as: AppUser.self)
+                let appUser = try await ProfileService().fetchCurrentUserProfile()
                 
                 self.user = user
                 self.appUser = appUser

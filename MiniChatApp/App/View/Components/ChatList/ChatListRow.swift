@@ -43,7 +43,7 @@ struct ChatListRow: View {
                 }
                     
                     VStack(alignment: .leading) {
-                        Text(user.username.isEmpty ? user.email : user.username)
+                        Text(user.username.isEmpty ? "User" : user.username)
                             .font(.system(size: 16, weight: .bold))
                         Text(chat.lastMessage)
                             .font(.system(size: 14))
