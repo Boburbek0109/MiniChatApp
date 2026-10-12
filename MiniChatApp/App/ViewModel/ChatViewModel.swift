@@ -11,6 +11,7 @@ import FirebaseFirestore
 @MainActor
 @Observable
 final class ChatViewModel{
+    
     var messages: [ChatMessageModel] = []
     
     var errorMessage: String?
@@ -20,6 +21,7 @@ final class ChatViewModel{
     
     private var chatService = ChatService()
     private var listener: ListenerRegistration?
+    private var chatListener: ListenerRegistration?
     
     func sendMessage(text: String, receiverId: String) async {
         guard !isSending else { return }
@@ -53,6 +55,39 @@ final class ChatViewModel{
         errorMessage = nil
         isListening = true
         
+        
+        do {
+            chatListener = try chatService.observeChats { [weak self] chats in
+                let hasChats = chats.contains(where: {chat in
+                    chat.participants.contains(receiverId)
+                })
+                if hasChats {
+                    
+                    if self?.listener == nil {
+                        self?.isLoadingMessages = true
+                        self?.startMessageListening(receiverId: receiverId)
+                    }
+                } else {
+                    self?.isLoadingMessages = false
+                }
+            } onError: { [weak self] error in
+                self?.errorMessage = error.localizedDescription
+                self?.isLoadingMessages = false
+                self?.isListening = false
+            }
+            
+        } catch {
+            errorMessage = error.localizedDescription
+            isLoadingMessages = false
+            isListening = false
+        }
+        
+//        startMessageListening(receiverId: receiverId)
+        
+    }
+    
+    func startMessageListening(receiverId: String) {
+        
         do {
             listener = try chatService.observeMessages(receiverId: receiverId) { [weak self] newMessage in
                 self?.messages = newMessage
@@ -73,6 +108,8 @@ final class ChatViewModel{
         listener?.remove()
         listener = nil
         isListening = false
+        chatListener?.remove()
+        chatListener = nil
     }
     
 }

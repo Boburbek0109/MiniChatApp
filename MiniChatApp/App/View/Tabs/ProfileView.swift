@@ -50,7 +50,6 @@ struct ProfileView: View {
                 }
             }
             .padding(15)
-            .padding(.bottom, 1000)
             .safeAreaInset(edge: .top, spacing: 0) {
                 ProfileHeader(isLargeHeader: $isLargeHeader, topInset: $topInset, onEditProfile: onEditProfile)
             }
@@ -75,13 +74,9 @@ struct ProfileView: View {
         .task {
             await profileVM.loadProfile()
         }
-        .onChange(of: isLargeHeader, { oldValue, newValue in
-            
-        })
         .onScrollPhaseChange{ oldPhase, newPhase in
             scrollPhase = newPhase
         }
-        
     }
 }
 

@@ -14,6 +14,7 @@ struct ProfileHeader: View {
     @Environment(AuthViewModel.self) private var authVM
     @Environment(ProfileViewModel.self) private var profileVM
     @State private var showsLogoutConfirmation = false
+    @State private var isMuted = false
     
     var onEditProfile: () -> Void
     
@@ -151,7 +152,7 @@ struct ProfileHeader: View {
     @ViewBuilder
     private func HeaderAction() -> some View{
         HStack{
-            CustomActionButton(isLargeHeader: isLargeHeader, icon: "bell.fill", title: "Mute")
+            CustomActionButton(isLargeHeader: isLargeHeader, icon: isMuted ? "bell.slash.fill" : "bell.fill", title: isMuted ? "Unmute" : "Mute") {isMuted.toggle()}
             CustomActionButton(isLargeHeader: isLargeHeader, icon: "magnifyingglass", title: "Search")
             CustomActionButton(isLargeHeader: isLargeHeader, icon: "rectangle.portrait.and.arrow.forward", title: "Log Out")
             { showsLogoutConfirmation = true }

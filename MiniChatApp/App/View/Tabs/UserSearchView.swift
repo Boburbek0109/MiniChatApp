@@ -80,7 +80,7 @@ struct UserSearchView: View {
     private var userList: some View {
         List(searchVM.filteredUsers) { user in
             NavigationLink {
-                MessageView(receiver: user)
+                ChatView(receiver: user)
             } label: {
                 UserSearchRow(user: user)
             }

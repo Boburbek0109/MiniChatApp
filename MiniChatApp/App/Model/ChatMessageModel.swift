@@ -13,7 +13,6 @@ struct ChatMessageModel: Codable, Identifiable {
 
     let senderId: String
     let receiverId: String
-    let senderEmail: String?
     let messages: String
     let createdAt: Date
 

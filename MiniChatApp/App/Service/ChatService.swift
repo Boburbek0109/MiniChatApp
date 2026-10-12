@@ -41,7 +41,6 @@ final class ChatService{
             "chatId": chatId,
             "senderId": senderId,
             "receiverId": receiverId,
-            "senderEmail": currentUser.email ?? "",
             "messages": messageText,
             "createdAt": FieldValue.serverTimestamp()
         ]
@@ -52,8 +51,7 @@ final class ChatService{
             "lastMessage": messageText,
             "lastSenderId": senderId,
             "updatedAt": FieldValue.serverTimestamp(),
-            "unreadCounts.\(receiverId)": FieldValue.increment(Int64(1)),
-            "unreadCounts.\(senderId)": 0
+            "unreadCounts": [ (receiverId): FieldValue.increment(Int64(1)), (senderId): 0  ]
         ]
         
         let batch = chatDB.batch()
@@ -91,7 +89,7 @@ final class ChatService{
                 
                 let messages = documents.compactMap { document in
                     do {
-                       return try document.data(as: ChatMessageModel.self)
+                        return try document.data(as: ChatMessageModel.self, with: .estimate)
                     } catch {
                         print("DEBUG: Failed to decode message \(document.documentID): \(error)")
                         return nil
@@ -120,7 +118,7 @@ final class ChatService{
                 
                 let chats: [ChatModel] = snapShot?.documents.compactMap { document -> ChatModel? in
                     do {
-                       return try document.data(as: ChatModel.self)
+                        return try document.data(as: ChatModel.self, with: .estimate)
                     } catch {
                         print("DEBUG: Error on observing chats: \(document.documentID): \(error)")
                         return nil

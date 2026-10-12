@@ -14,7 +14,22 @@ struct ChatListView: View {
     @Environment(AuthViewModel.self) var authVM
     
     @State private var isheaderVisile = true
-        
+    var showUnreadOnly = false
+    
+    var displayedChats: [ChatModel] {
+        if showUnreadOnly == false {
+            return listVM.chats
+        } else {
+            guard let currentUserId = authVM.user?.uid else {
+                return []
+                }
+            
+            return listVM.chats.filter(){ chat in
+                chat.unreadCounts(for: currentUserId) > 0
+            }
+        }
+    }
+    
     var body: some View {
             
         ZStack(alignment: .top){
@@ -25,14 +40,20 @@ struct ChatListView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding(.top, 70)
             }
-            else if listVM.chats.isEmpty{
-                ContentUnavailableView("No chats yet", systemImage: "message", description: Text("Start new chat with Searching"))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.top, 70)
+            else if displayedChats.isEmpty{
+                if showUnreadOnly {
+                    ContentUnavailableView("No unread chats", systemImage: "message", description: Text("You're all caught up"))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.top, 70)
+                } else {
+                    ContentUnavailableView("No chats yet", systemImage: "message", description: Text("Start new chat with Searching"))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.top, 70)
+                }
             } else {
                 ScrollView{
                     LazyVStack{
-                        ForEach(listVM.chats) { chat in
+                        ForEach(displayedChats) { chat in
                             if let currentUserId = authVM.user?.uid{
                                 if let user = listVM.user(for: chat, currentUserId: currentUserId){
                                     ChatListRow(user: user, chat: chat, currentUserId: currentUserId)
@@ -66,18 +87,20 @@ struct ChatListView: View {
         }
         .onAppear{
             guard let currentUserId = authVM.user?.uid else { return }
-            listVM.startListening(currentUserId: currentUserId) }
+            listVM.startListening(currentUserId: currentUserId)
+        }
+        
         .onDisappear{ listVM.stopListening() }
     }
 }
 
 
-#Preview {
-    if FirebaseApp.app() == nil {
-        FirebaseApp.configure()
-    }
-    
-    return ChatListView()
-        .environment(ProfileViewModel())
-        .environment(AuthViewModel())
-}
+//#Preview {
+//    if FirebaseApp.app() == nil {
+//        FirebaseApp.configure()
+//    }
+//    
+//    return ChatListView()
+//        .environment(ProfileViewModel())
+//        .environment(AuthViewModel())
+//}

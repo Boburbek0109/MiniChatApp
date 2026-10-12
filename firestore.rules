@@ -39,11 +39,11 @@ service cloud.firestore {
       let data = request.resource.data;
       return data.keys().hasAll([
           'chatId', 'senderId', 'receiverId',
-          'senderEmail', 'messages', 'createdAt'
+          'messages', 'createdAt'
         ])
         && data.keys().hasOnly([
           'chatId', 'senderId', 'receiverId',
-          'senderEmail', 'messages', 'createdAt'
+          'messages', 'createdAt'
         ])
         && data.chatId == chatId
         && data.senderId == request.auth.uid
@@ -52,21 +52,23 @@ service cloud.firestore {
         && data.receiverId in getAfter(
           /databases/$(database)/documents/chats/$(chatId)
         ).data.participants
-        && data.senderEmail is string
-        && data.senderEmail == request.auth.token.get('email', '')
         && data.messages is string
         && data.messages.size() > 0
         && data.createdAt == request.time;
     }
 
-    // Public and private profile fields are still stored together.
-    // Splitting them requires a coordinated client change.
+    // Public documents accept only PublicProfile fields.
+    // Private data is stored in /users/{userId}/private/profile.
     match /users/{userId} {
       allow read: if isSignedIn();
 
       allow create, update: if isSignedIn()
                             && request.auth.uid == userId
-                            && request.resource.data.uid == userId;
+                            && request.resource.data.uid == userId
+                            && request.resource.data.keys().hasOnly([
+                              'uid', 'username', 'bio', 'avatarURL',
+                              'visibleEmail', 'visibleBirthDate'
+                            ]);
 
       allow delete: if isSignedIn() && request.auth.uid == userId;
 

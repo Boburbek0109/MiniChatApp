@@ -8,7 +8,9 @@
 import FirebaseFirestore
 
 struct AppUser: Codable, Hashable, Identifiable {
-    @DocumentID var id: String?
+    var id: String{
+        uid
+    }
     
     let uid: String
     var username: String

@@ -18,11 +18,6 @@ struct MessageRow: View{
             }
             
             VStack(alignment: message.isFromCurrentUser ? .trailing : .leading, spacing: 4) {
-                if !message.isFromCurrentUser {
-                    Text(message.senderEmail ?? "Unknown")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
                 
                 Text(message.messages)
                     .padding(12)

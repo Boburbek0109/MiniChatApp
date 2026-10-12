@@ -22,8 +22,8 @@ struct MainTabView: View{
                 UserSearchView()
             }
             
-            Tab.init("Notification", systemImage: "bell", value: 2){
-                
+            Tab.init("Unread", systemImage: "bell", value: 2){
+                ChatListView(showUnreadOnly: true)
             }
             
             Tab.init("Profile", systemImage: "person", value: 3){

@@ -150,27 +150,34 @@ final class ProfileService {
             throw ProfileError.notLoggedIn
         }
         
-        guard let email = user.email else {
-            throw ProfileError.emailUnavailable
-        }
-        
-        let newProfile = AppUser(
+        let newProfile = PublicProfile(
             uid: user.uid,
             username: "",
-            email: email,
             bio: "",
             avatarURL: nil,
-            birthDate: nil)
+            visibleEmail: nil,
+            visibleBirthDate: nil)
+        let publicData = try Firestore.Encoder().encode(newProfile)
+        let publicRef = usersCollection.document(user.uid)
         
-        let profileData = try Firestore.Encoder().encode(newProfile)
-        let profileRef = usersCollection.document(user.uid)
+        let privacy = PrivateProfile(
+            birthDate: nil,
+            isEmailPublic: false,
+            isBirthdayPublic: false)
+        let privacyData = try Firestore.Encoder().encode(privacy)
+        let privacyProfileRef = privateProfileRef(uid: user.uid)
         
         _ = try await database.runTransaction{ transaction, errorPointer in
             do {
-                let snapshot = try transaction.getDocument(profileRef)
+                let snapshot = try transaction.getDocument(publicRef)
+                let privacySnap =  try transaction.getDocument(privacyProfileRef)
                 
                 if !snapshot.exists {
-                    transaction.setData(profileData, forDocument: profileRef)
+                    transaction.setData(publicData, forDocument: publicRef)
+                }
+                
+                if !privacySnap.exists{
+                    transaction.setData(privacyData, forDocument: privacyProfileRef)
                 }
             } catch {
                 errorPointer?.pointee = error as NSError

@@ -21,7 +21,7 @@ struct ChatListRow: View {
     var body: some View {
         VStack{
             NavigationLink{
-                MessageView(receiver: user)
+                ChatView(receiver: user)
             } label: {
                 HStack(spacing: 16) {
                     if let avatarURL = user.avatarURL,
@@ -45,6 +45,7 @@ struct ChatListRow: View {
                     VStack(alignment: .leading) {
                         Text(user.username.isEmpty ? "User" : user.username)
                             .font(.system(size: 16, weight: .bold))
+                        
                         Text(chat.lastMessage)
                             .font(.system(size: 14))
                             .foregroundStyle(Color(.lightGray))
@@ -53,15 +54,22 @@ struct ChatListRow: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    Spacer()
                     
-                    Text(formattedDate)
-                        .font(.system(size: 8, weight: .semibold))
-                        .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .center))
+                    VStack(alignment: .trailing, spacing: 4){
+                        Text(formattedDate)
+                            .font(.system(size: 8, weight: .semibold))
+                        
+                        if unreadCount > 0{
+                            Text(String(unreadCount))
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.white)
+                                .background(Circle().fill(.indigo))
+                        }
+                    }
                 }
-                Divider()
-                    .padding(.vertical, 8)
             }
+            Divider()
+                .padding(.vertical, 8)
         }
         .padding(.horizontal)
     }

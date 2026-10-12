@@ -47,11 +47,9 @@ final class AuthViewModel{
             
             let privateProfile = PrivateProfile(birthDate: nil)
             
-            let profileData = try Firestore.Encoder().encode(appUser)
-            try await Firestore.firestore()
-                .collection("users")
-                .document(user.uid)
-                .setData(profileData)
+            _ = try await ProfileService().createProfiles(
+                publicProfile: publicProfile,
+                privateProfile: privateProfile)
             
             self.user = user
             self.appUser = appUser
